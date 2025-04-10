@@ -1,6 +1,6 @@
 package client
 
-import "github.com/noodahl-org/erp/internal/models"
+import "github.com/noodahl-org/erp/api/models"
 
 func (c *erpClient) FetchUserMaintenanceTasks(query models.UserMaintenanceTask) ([]models.UserMaintenanceTask, error) {
 	results := []models.UserMaintenanceTask{}

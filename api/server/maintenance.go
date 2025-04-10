@@ -6,7 +6,7 @@ import (
 
 	"github.com/adhocore/gronx"
 	"github.com/labstack/echo"
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 )
 
 func (s *Server) FetchMaintenanceTasks(e echo.Context) error {

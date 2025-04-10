@@ -6,8 +6,8 @@ import (
 	"github.com/adhocore/gronx"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo"
-	api "github.com/noodahl-org/erp/internal/api/conf"
-	"github.com/noodahl-org/erp/internal/clients/postgres"
+	api "github.com/noodahl-org/erp/api/conf"
+	"github.com/noodahl-org/erp/api/clients/postgres"
 )
 
 type Msg struct {

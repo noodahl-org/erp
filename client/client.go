@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 	"resty.dev/v3"
 )
 

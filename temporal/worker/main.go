@@ -8,7 +8,9 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/joho/godotenv"
-	"github.com/noodahl-org/erp/internal/clients/postgres"
+	"github.com/noodahl-org/erp/api/clients/brave"
+	"github.com/noodahl-org/erp/api/clients/ollama"
+	"github.com/noodahl-org/erp/api/clients/postgres"
 	"github.com/noodahl-org/erp/temporal/worker/conf"
 	"github.com/noodahl-org/erp/temporal/worker/workflows"
 	"go.temporal.io/sdk/client"
@@ -46,11 +48,21 @@ func init() {
 		log.Fatalln(err)
 	}
 
+	b := brave.NewBraveClient(
+		brave.WithAPIKey(os.Getenv("BRAVE_API_KEY")),
+	)
+
+	o := ollama.NewOllamaClient(
+		ollama.WithBaseURL(os.Getenv("OLLAMA_URL")),
+	)
+
 	wfclient = workflows.NewWorkflowClient(
 		workflows.WithValidator(valid),
 		workflows.WithDB(postgres.NewPGDB(
 			postgres.WithGormDB(db),
 		)),
+		workflows.WithBraveClient(b),
+		workflows.WithOllamaClient(o),
 	)
 }
 
@@ -65,6 +77,8 @@ func main() {
 	w.RegisterWorkflow(wfclient.NewEquipmentWorkflow)
 	w.RegisterActivity(wfclient.FetchEquipmentActivity)
 	w.RegisterActivity(wfclient.BraveSearchActivity)
+	w.RegisterActivity(wfclient.FetchEquipmentComponentsActivity)
+	w.RegisterActivity(wfclient.GenerateEquipmentComponentsActivity)
 
 	if err := w.Run(worker.InterruptCh()); err != nil {
 		log.Fatalln(err)

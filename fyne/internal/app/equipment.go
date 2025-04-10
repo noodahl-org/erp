@@ -15,7 +15,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	xw "fyne.io/x/fyne/widget"
 	"github.com/noodahl-org/erp/fyne/internal/widgets"
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 	"github.com/samber/lo"
 )
 

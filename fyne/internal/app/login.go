@@ -1,7 +1,7 @@
 package mobileapp
 
 import (
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 )
 
 func (a *MobileApp) Login(user models.User) error {

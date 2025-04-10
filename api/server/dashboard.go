@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 )
 
 func (s *Server) Dashboard(e echo.Context) error {

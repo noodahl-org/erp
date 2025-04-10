@@ -3,17 +3,19 @@ package workflows
 import (
 	"github.com/go-playground/validator"
 	"github.com/gocolly/colly"
-	"github.com/noodahl-org/erp/internal/clients/brave"
-	"github.com/noodahl-org/erp/internal/clients/postgres"
+	"github.com/noodahl-org/erp/api/clients/brave"
+	"github.com/noodahl-org/erp/api/clients/ollama"
+	"github.com/noodahl-org/erp/api/clients/postgres"
 	"resty.dev/v3"
 )
 
 type WorkflowClient struct {
 	resty      resty.Client
 	webscraper *colly.Collector
-	brave      *brave.BraveClient
+	brave      brave.BraveClient
 	db         postgres.DBClient
 	valid      *validator.Validate
+	ollama     ollama.OllamaClient
 }
 
 func NewWorkflowClient(opts ...func(*WorkflowClient)) *WorkflowClient {
@@ -29,9 +31,21 @@ func NewWorkflowClient(opts ...func(*WorkflowClient)) *WorkflowClient {
 	return cl
 }
 
+func WithOllamaClient(ollama ollama.OllamaClient) func(*WorkflowClient) {
+	return func(w *WorkflowClient) {
+		w.ollama = ollama
+	}
+}
+
+func WithBraveClient(brave brave.BraveClient) func(*WorkflowClient) {
+	return func(w *WorkflowClient) {
+		w.brave = brave
+	}
+}
+
 func WithValidator(v *validator.Validate) func(*WorkflowClient) {
-	return func(wc *WorkflowClient) {
-		wc.valid = v
+	return func(w *WorkflowClient) {
+		w.valid = v
 	}
 }
 

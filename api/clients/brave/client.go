@@ -2,23 +2,34 @@ package brave
 
 import (
 	"context"
-
-	"github.com/noodahl-org/erp/internal/clients/brave/models"
+	"github.com/noodahl-org/erp/api/clients/brave/models"
 	"resty.dev/v3"
 )
 
 type BraveClient interface {
+	Search(ctx context.Context, query string) (models.SearchResponse, error)
 }
 
 type braveClient struct {
 	client *resty.Client
 }
 
-func NewBraveClient(opts func(*braveClient) *braveClient) BraveClient {
+func NewBraveClient(opts ...func(*braveClient) *braveClient) BraveClient {
 	client := resty.New()
 	client.SetBaseURL("https://api.search.brave.com/res/v1/web")
-	return &braveClient{
+	b := &braveClient{
 		client: client,
+	}
+	for _, opt := range opts {
+		opt(b)
+	}
+	return b
+}
+
+func WithAPIKey(key string) func(*braveClient) *braveClient {
+	return func(b *braveClient) *braveClient {
+		b.client.SetHeader("X-Subscription-Token", key)
+		return b // Return the client after setting the header
 	}
 }
 

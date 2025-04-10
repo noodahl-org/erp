@@ -7,7 +7,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 )
 
 func DashboardWidget(dashboard models.Dashboard, handler func(string)) *fyne.Container {

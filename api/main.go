@@ -7,10 +7,10 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/joho/godotenv"
-	api "github.com/noodahl-org/erp/internal/api/conf"
-	"github.com/noodahl-org/erp/internal/api/server"
-	pg "github.com/noodahl-org/erp/internal/clients/postgres"
-	"github.com/noodahl-org/erp/internal/models"
+	api "github.com/noodahl-org/erp/api/conf"
+	pg "github.com/noodahl-org/erp/api/clients/postgres"
+	"github.com/noodahl-org/erp/api/server"
+	"github.com/noodahl-org/erp/api/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -74,6 +74,7 @@ func main() {
 		models.UserEquipment{},
 		models.MaintenanceTask{},
 		models.UserMaintenanceTask{},
+		models.EquipmentComponent{},
 	}
 	for _, d := range defs {
 		serv.MigrateDomainModel(&d)

@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"github.com/noodahl-org/erp/fyne/internal/widgets"
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 )
 
 func (a *MobileApp) ShowDashboard() {

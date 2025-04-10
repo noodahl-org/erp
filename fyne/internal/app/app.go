@@ -7,7 +7,7 @@ import (
 	"fyne.io/x/fyne/theme"
 	"github.com/noodahl-org/erp/client"
 	"github.com/noodahl-org/erp/fyne/internal/widgets"
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 )
 
 type MobileApp struct {

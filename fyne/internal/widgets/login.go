@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 )
 
 func LoginWidget(loginFunc, registerFunc func(models.User) error) *widget.Form {

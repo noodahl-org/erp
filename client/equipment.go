@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/noodahl-org/erp/internal/models"
+	"github.com/noodahl-org/erp/api/models"
 )
 
 func (c *erpClient) FetchEquipment(query models.Equipment) ([]models.Equipment, error) {
