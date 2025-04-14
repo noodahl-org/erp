@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,25 +17,32 @@ import (
 )
 
 type EquipmentActivity struct {
-	Equipment               models.Equipment
-	Components              []models.EquipmentComponent
-	UserManualSearchResults bravemodels.SearchResponse
+	Equipment  models.Equipment
+	Components []models.EquipmentComponent
 }
 
 func (c *WorkflowClient) NewEquipmentWorkflow(ctx workflow.Context, id uuid.UUID) error {
 	options := workflow.ActivityOptions{
-		StartToCloseTimeout: 3 * time.Minute,
+		StartToCloseTimeout: 2 * time.Minute,
 		RetryPolicy: &temporal.RetryPolicy{
 			MaximumAttempts: 2,
 		},
 	}
 
+	llmOpts := workflow.ActivityOptions{
+		StartToCloseTimeout: 6 * time.Minute,
+		RetryPolicy: &temporal.RetryPolicy{
+			MaximumAttempts: 6,
+		},
+	}
+
 	actx := workflow.WithActivityOptions(ctx, options)
+	lctx := workflow.WithActivityOptions(ctx, llmOpts)
+
 	act := &EquipmentActivity{
 		Equipment: models.Equipment{
 			ID: id.String(),
 		},
-		UserManualSearchResults: bravemodels.SearchResponse{},
 	}
 
 	err := workflow.ExecuteActivity(actx, c.FetchEquipmentActivity, id).Get(ctx, &act.Equipment)
@@ -50,14 +56,17 @@ func (c *WorkflowClient) NewEquipmentWorkflow(ctx workflow.Context, id uuid.UUID
 	}
 
 	if len(act.Components) == 0 {
-		err = workflow.ExecuteActivity(actx, c.GenerateEquipmentComponentsActivity, act.Equipment).Get(ctx, &act.Components)
+		err = workflow.ExecuteActivity(lctx, c.GenerateEquipmentComponentsActivity, act.Equipment).Get(ctx, &act.Components)
 		if err != nil {
 			return err
 		}
+		for _, comp := range act.Components {
+			err = workflow.ExecuteActivity(actx, c.CreateActivity, &comp).Get(ctx, nil)
+			if err != nil {
+				return err
+			}
+		}
 	}
-
-	log.Println("Equipment:", act.Equipment)
-	log.Println("Components", act.Components)
 
 	return nil
 }
@@ -72,9 +81,13 @@ func (e *WorkflowClient) FetchEquipmentComponentsActivity(ctx context.Context, i
 	return results, e.db.FetchMany(ctx, models.EquipmentComponent{EquipmentID: id.String()}, &results)
 }
 
+func (e *WorkflowClient) CreateActivity(ctx context.Context, query interface{}) error {
+	return e.db.Create(ctx, query)
+}
+
 func (e *WorkflowClient) GenerateEquipmentComponentsActivity(ctx context.Context, equipment models.Equipment) ([]models.EquipmentComponent, error) {
 	results := []models.EquipmentComponent{}
-	query := fmt.Sprintf(`describe the the major components of %s %s. Respond using JSON`,
+	query := fmt.Sprintf(`describe the the major physical/mechanical components of %s %s. prefer single word if possible.  Respond using JSON`,
 		equipment.Make, equipment.Model)
 	format := map[string]interface{}{
 		"type": "object",

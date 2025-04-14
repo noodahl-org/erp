@@ -19,4 +19,5 @@ for the less than enterprising
 
 - the system should attempt to reconcile missing or incomplete equipment data
 - the system should allow the user to input the least amount of data necessary
-
+- the system should eventually have all the data present to the user 
+- 

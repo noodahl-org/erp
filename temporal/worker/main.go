@@ -79,6 +79,7 @@ func main() {
 	w.RegisterActivity(wfclient.BraveSearchActivity)
 	w.RegisterActivity(wfclient.FetchEquipmentComponentsActivity)
 	w.RegisterActivity(wfclient.GenerateEquipmentComponentsActivity)
+	w.RegisterActivity(wfclient.CreateActivity)
 
 	if err := w.Run(worker.InterruptCh()); err != nil {
 		log.Fatalln(err)

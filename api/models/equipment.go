@@ -66,6 +66,14 @@ type EquipmentComponent struct {
 	Name        string     `json:"name"`
 }
 
+func (e *EquipmentComponent) BeforeCreate(tx *gorm.DB) error {
+	if e.ID == "" {
+		e.ID = uuid.New().String()
+	}
+
+	return nil
+}
+
 func (e EquipmentComponent) ListLabel() string {
 	return e.Name
 }
