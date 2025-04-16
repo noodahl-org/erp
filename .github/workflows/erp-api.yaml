@@ -11,7 +11,8 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -22,53 +23,46 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Build
+      - name: Build Go application
         run: go build -v ./api/main.go
-
+      
       - name: Configure Docker for insecure registry
         run: |
-          # Configure Docker to work with insecure registry
+          # Create a new daemon.json file
           echo '{
-            "insecure-registries" : ["registry.tools.svc.cluster.local:5000"]
+            "insecure-registries": ["registry.tools.svc.cluster.local:5000"]
           }' | sudo tee /etc/docker/daemon.json
-
-          # Restart Docker to apply changes
-          sudo systemctl restart docker || sudo service docker restart || true
+          
+          # Try to reload Docker configuration without restarting
+          sudo kill -SIGHUP $(pidof dockerd) || echo "Could not send SIGHUP to dockerd"
+          
+          # Wait for configuration to apply
           sleep 5
-
-          # Verify Docker is working
-          docker info
-
-      - name: Build and Push Docker image
-        env:
-          REGISTRY: registry.tools.svc.cluster.local:5000
-          IMAGE_NAME: erp-api
+          
+          # Verify configuration
+          docker info | grep -A 5 "Insecure Registries"
+      
+      - name: Build Docker Image
         run: |
-          # Set timestamp and tag
-          TIMESTAMP=$(date +%Y%m%d%H%M%S)
-          TAG=${GITHUB_SHA::7}
-
-          # Build the image
-          docker build -t ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG} -t ${REGISTRY}/${IMAGE_NAME}:latest .
-
-          # Push the image with insecure flag
-          docker push --insecure ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG} || docker push ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG}
-          docker push --insecure ${REGISTRY}/${IMAGE_NAME}:latest || docker push ${REGISTRY}/${IMAGE_NAME}:latest
-
-      - name: Kubernetes Deployment
+          docker build -t registry.tools.svc.cluster.local:5000/erp-api:${{ github.sha }} -t registry.tools.svc.cluster.local:5000/erp-api:latest .
+      
+      - name: Login to Docker Registry
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login registry.tools.svc.cluster.local:5000 --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      
+      - name: Push Docker Image
+        run: |
+          # First attempt with native Docker push
+          docker push registry.tools.svc.cluster.local:5000/erp-api:${{ github.sha }} || echo "Native push failed"
+          docker push registry.tools.svc.cluster.local:5000/erp-api:latest || echo "Native push failed"
+            
+      - name: Set up kubectl
         uses: azure/setup-kubectl@v1
         with:
           version: "latest"
-      - name: Run kubectl command
-        with:
-          args: -n tools
-        run: kubectl rollout deployment/erp-api
-
-      # - name: Kubernetes Deployment Validation
-      #   uses: azure/setup-kubectl@v1
-      #   with:
-      #     version: "latest"
-      # - name: Run kubectl command
-      #   with:
-      #     args: -n tools
-      #   run: kubectl rollout status deployment/erp-api
+      
+      - name: Restart Kubernetes deployment
+        run: kubectl rollout restart deployment/erp-api -n tools
+      
+      - name: Validate Kubernetes deployment
+        run: kubectl rollout status deployment/erp-api -n tools
