@@ -44,16 +44,16 @@ jobs:
           REGISTRY: registry.tools.svc.cluster.local:5000
           IMAGE_NAME: erp-api
         run: |
+          # Set timestamp and tag
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           TAG=${GITHUB_SHA::7}
-          
+
           # Build the image
           docker build -t ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG} -t ${REGISTRY}/${IMAGE_NAME}:latest .
-          
-          # Force HTTP protocol version for push
-          export DOCKER_CLI_EXPERIMENTAL=enabled
-          docker push --tls-verify=false ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG}
-          docker push --tls-verify=false ${REGISTRY}/${IMAGE_NAME}:latest
+
+          # Push the image
+          docker push ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG}
+          docker push ${REGISTRY}/${IMAGE_NAME}:latest
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
