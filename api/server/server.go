@@ -2,12 +2,13 @@ package server
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/adhocore/gronx"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo"
-	api "github.com/noodahl-org/erp/api/conf"
 	"github.com/noodahl-org/erp/api/clients/postgres"
+	api "github.com/noodahl-org/erp/api/conf"
 )
 
 type Msg struct {
@@ -42,6 +43,7 @@ func NewServer(opts ...func(*Server)) *Server {
 
 	//routes
 	//equipment
+	s.e.GET("/liveness", s.Liveliness)
 	s.e.GET("/equipment", s.FetchEquipment)
 	s.e.GET("/equipment/:id", s.FetchEquipmentByID)
 	s.e.POST("/equipment", s.UpsertEquipment)
@@ -102,4 +104,12 @@ func (s *Server) Start() {
 
 func (s *Server) MigrateDomainModel(model *interface{}) error {
 	return s.db.AutoMigrate(model)
+}
+
+func (s *Server) Health(e echo.Context) error {
+	return e.JSON(http.StatusOK, nil)
+}
+
+func (s *Server) Liveliness(e echo.Context) error {
+	return e.JSON(http.StatusOK, nil)
 }
