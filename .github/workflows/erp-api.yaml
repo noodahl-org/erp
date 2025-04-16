@@ -51,18 +51,24 @@ jobs:
           # Build the image
           docker build -t ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG} -t ${REGISTRY}/${IMAGE_NAME}:latest .
 
-          # Push the image
-          docker push ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG}
-          docker push ${REGISTRY}/${IMAGE_NAME}:latest
+          # Push the image with insecure flag
+          docker push --insecure ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG} || docker push ${REGISTRY}/${IMAGE_NAME}:${TIMESTAMP}-${TAG}
+          docker push --insecure ${REGISTRY}/${IMAGE_NAME}:latest || docker push ${REGISTRY}/${IMAGE_NAME}:latest
 
-      - name: Set up kubectl
+      - name: Kubernetes Deployment
         uses: azure/setup-kubectl@v1
         with:
           version: "latest"
-          
-      - name: Restart Kubernetes deployment
-        run: kubectl rollout restart deployment/erp-api -n tools
+      - name: Run kubectl command
+        with:
+          args: -n tools
+        run: kubectl rollout deployment/erp-api
 
-      # Uncomment the following for rollout status verification
-      # - name: Verify Kubernetes deployment
-      #   run: kubectl rollout status deployment/erp-api -n tools
+      # - name: Kubernetes Deployment Validation
+      #   uses: azure/setup-kubectl@v1
+      #   with:
+      #     version: "latest"
+      # - name: Run kubectl command
+      #   with:
+      #     args: -n tools
+      #   run: kubectl rollout status deployment/erp-api
