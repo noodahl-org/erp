@@ -42,8 +42,12 @@ func NewServer(opts ...func(*Server)) *Server {
 	}
 
 	//routes
-	//equipment
+	// kubernetes checks
 	s.e.GET("/liveness", s.Liveliness)
+	s.e.GET("/health", s.Health)
+	s.e.GET("/healthz", s.Liveliness)
+
+	// equipment
 	s.e.GET("/equipment", s.FetchEquipment)
 	s.e.GET("/equipment/:id", s.FetchEquipmentByID)
 	s.e.POST("/equipment", s.UpsertEquipment)

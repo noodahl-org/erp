@@ -52,7 +52,6 @@ jobs:
       
       - name: Push Docker Image
         run: |
-          # First attempt with native Docker push
           docker push registry.tools.svc.cluster.local:5000/erp-api:${{ github.sha }} || echo "Native push failed"
           docker push registry.tools.svc.cluster.local:5000/erp-api:latest || echo "Native push failed"
             
