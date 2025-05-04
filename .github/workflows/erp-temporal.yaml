@@ -3,10 +3,6 @@ name: Go Temporal CI/CD
 on:
   push:
     branches: [main, master]
-    paths:
-      - 'temporal/**'
-      - 'go.mod'
-      - 'go.sum'
   pull_request:
     branches: [main, master]
 

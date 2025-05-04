@@ -3,10 +3,6 @@ name: Go API CI/CD
 on:
   push:
     branches: [main, master]
-    paths:
-      - 'api/**'
-      - 'go.mod'
-      - 'go.sum'
   pull_request:
     branches: [main, master]
 
