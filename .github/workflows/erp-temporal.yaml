@@ -1,4 +1,4 @@
-name: Go API CI/CD
+name: Go Temporal CI/CD
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         run: go mod download
 
       - name: Build Go application
-        run: go build -v ./api/main.go
+        run: go build -v ./temporal/main.go
       
       - name: Configure Docker for insecure registry
         run: |
@@ -44,7 +44,7 @@ jobs:
       
       - name: Build Docker Image
         run: |
-          docker build -t registry.tools.svc.cluster.local:5000/erp-api:${{ github.sha }} -t registry.tools.svc.cluster.local:5000/erp-api:latest .
+          docker build -t registry.tools.svc.cluster.local:5000/erp-temporal:${{ github.sha }} -t registry.tools.svc.cluster.local:5000/erp-temporal:latest .
       
       - name: Login to Docker Registry
         run: |
@@ -52,8 +52,8 @@ jobs:
       
       - name: Push Docker Image
         run: |
-          docker push registry.tools.svc.cluster.local:5000/erp-api:${{ github.sha }} || echo "Native push failed"
-          docker push registry.tools.svc.cluster.local:5000/erp-api:latest || echo "Native push failed"
+          docker push registry.tools.svc.cluster.local:5000/erp-temporal:${{ github.sha }} || echo "Native push failed"
+          docker push registry.tools.svc.cluster.local:5000/erp-temporal:latest || echo "Native push failed"
             
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
@@ -61,7 +61,7 @@ jobs:
           version: "latest"
       
       - name: Restart Kubernetes deployment
-        run: kubectl rollout restart deployment/erp-api -n tools
+        run: kubectl rollout restart deployment/erp-temporal -n tools
       
       - name: Validate Kubernetes deployment
-        run: kubectl rollout status deployment/erp-api -n tools
+        run: kubectl rollout status deployment/erp-temporal -n tools

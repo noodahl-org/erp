@@ -20,7 +20,7 @@ COPY --from=builder /app/main ./
 
 USER appuser
 
-EXPOSE 8081
+EXPOSE 8080
 CMD ["./main"]
 
 
