@@ -3,6 +3,10 @@ name: Go Temporal CI/CD
 on:
   push:
     branches: [main, master]
+    paths:
+      - 'temporal/**'
+      - 'go.mod'
+      - 'go.sum'
   pull_request:
     branches: [main, master]
 
@@ -44,7 +48,7 @@ jobs:
       
       - name: Build Docker Image
         run: |
-          docker build -t registry.tools.svc.cluster.local:5000/erp-temporal:${{ github.sha }} -t registry.tools.svc.cluster.local:5000/erp-temporal:latest .
+          docker build -t registry.tools.svc.cluster.local:5000/erp-temporal:${{ github.sha }} -t registry.tools.svc.cluster.local:5000/erp-temporal:latest -f ./temporal/Dockerfile .
       
       - name: Login to Docker Registry
         run: |
