@@ -67,6 +67,7 @@ func init() {
 }
 
 func main() {
+	fmt.Println(os.Getenv("TEMPORAL_HOST"))
 	c, err := client.Dial(client.Options{
 		HostPort: os.Getenv("TEMPORAL_HOST"),
 	})
