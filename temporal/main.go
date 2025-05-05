@@ -67,7 +67,9 @@ func init() {
 }
 
 func main() {
-	c, err := client.Dial(client.Options{})
+	c, err := client.Dial(client.Options{
+		HostPort: os.Getenv("TEMPORAL_HOST"),
+	})
 	if err != nil {
 		log.Fatalln("unable to create workflow client", err)
 	}
