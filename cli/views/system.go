@@ -3,9 +3,11 @@ package views
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"go.temporal.io/sdk/client"
 	"resty.dev/v3"
 )
 
@@ -94,7 +96,17 @@ func (s *SystemsView) Init() []tea.Cmd {
 			return s.wait()
 		},
 		func() tea.Msg {
-			
+			if val, ok := s.conf["TEMPORAL_HOST"]; ok {
+				log.Println("temporal host", s.conf["TEMPORAL_HOST"])
+				_, err := client.Dial(client.Options{
+					HostPort: val,
+				})
+				if err != nil {
+					s.sub <- status(status{index: 1, msg: err.Error()})
+					return nil
+				}
+				s.sub <- status(status{index: 1, msg: "OK"})
+			}
 			return s.wait()
 		},
 		s.wait(),

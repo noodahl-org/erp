@@ -5,9 +5,9 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/x/fyne/theme"
+	"github.com/noodahl-org/erp/api/models"
 	"github.com/noodahl-org/erp/client"
 	"github.com/noodahl-org/erp/fyne/internal/widgets"
-	"github.com/noodahl-org/erp/api/models"
 )
 
 type MobileApp struct {
@@ -59,6 +59,9 @@ func (a *MobileApp) ButtonHandler(index string) {
 			),
 		)
 	case "maintenance/view":
+		a.Main.SetContent(
+			container.NewGridWithRows(2),
+		)
 	case "maintenance/edit":
 	}
 }

@@ -13,6 +13,7 @@ type ERPClient interface {
 	FetchUserEquipment(query models.UserEquipment) ([]models.UserEquipment, error)
 	UpserUserEquipment(query models.UserEquipment) (*models.UserEquipment, error)
 	FetchUserMaintenanceTasks(query models.UserMaintenanceTask) ([]models.UserMaintenanceTask, error)
+	FetchDashboard(userID string) (*models.Dashboard, error)
 }
 
 type erpClient struct {

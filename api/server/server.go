@@ -65,6 +65,8 @@ func NewServer(opts ...func(*Server)) *Server {
 	s.e.GET("/users", s.FetchUser)
 	s.e.POST("/users", s.UpsertUser)
 	s.e.DELETE("/users", s.DeleteUser)
+	//user dashboard
+	s.e.GET("/dashboard", s.Dashboard)
 
 	//user equipment
 	s.e.GET("/equipment/user/:id", s.FetchUserEquipment)

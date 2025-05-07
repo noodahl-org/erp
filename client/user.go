@@ -17,3 +17,17 @@ func (c *erpClient) FetchUser(query models.User) (*models.User, error) {
 	}
 	return &user, res.Err
 }
+
+func (c *erpClient) FetchDashboard(userID string) (*models.Dashboard, error) {
+	var dash models.Dashboard
+	res, err := c.client.R().
+		SetResult(&dash).
+		SetQueryParams(map[string]string{
+			"user_id": userID,
+		}).
+		Get("/dashboard")
+	if err != nil {
+		return nil, err
+	}
+	return &dash, res.Err
+}
