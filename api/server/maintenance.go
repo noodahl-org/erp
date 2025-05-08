@@ -17,7 +17,7 @@ func (s *Server) FetchMaintenanceTasks(e echo.Context) error {
 		return e.JSON(http.StatusBadRequest, serverMsg("unable to bind requests", err))
 	}
 	results := []models.MaintenanceTask{}
-	if err := s.db.Fetch(ctx, query, &results); err != nil {
+	if err := s.db.FetchMany(ctx, query, &results); err != nil {
 		return e.JSON(http.StatusInternalServerError, serverMsg("unable to fetch maintenance tasks", err))
 	}
 	return e.JSON(http.StatusAccepted, results)
