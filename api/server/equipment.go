@@ -69,7 +69,7 @@ func (s *Server) DeleteEquipment(e echo.Context) error {
 
 func (s *Server) FetchUserEquipment(e echo.Context) error {
 	ctx := e.Request().Context()
-	id, err := uuid.Parse(e.QueryParam("id"))
+	id, err := uuid.Parse(e.Param("id"))
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, serverMsg("unable to parse id", err))
 	}
