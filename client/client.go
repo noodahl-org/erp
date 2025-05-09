@@ -12,6 +12,8 @@ type ERPClient interface {
 	UpsertEquipment(query models.Equipment) (*models.Equipment, error)
 	FetchUserEquipment(query models.UserEquipment) ([]models.UserEquipment, error)
 	UpserUserEquipment(query models.UserEquipment) (*models.UserEquipment, error)
+	UpsertMaintenanceTask(query models.MaintenanceTask) (*models.MaintenanceTask, error)
+	FetchMaintenanceTasks(query models.MaintenanceTask) ([]models.MaintenanceTask, error)
 	FetchUserMaintenanceTasks(query models.UserMaintenanceTask) ([]models.UserMaintenanceTask, error)
 	FetchDashboard(userID string) (*models.Dashboard, error)
 }

@@ -36,6 +36,9 @@ func (c *erpClient) FetchUserEquipment(query models.UserEquipment) ([]models.Use
 	results := []models.UserEquipment{}
 	res, err := c.client.R().
 		SetResult(&results).
+		SetQueryParams(map[string]string{
+			"id": query.ID,
+		}).
 		Get("/equipment/user/" + query.UserID)
 	if err != nil {
 		return nil, err
